@@ -1,11 +1,12 @@
 import React, {Fragment as F} from   'react';
 import {Dropbox} from 'dropbox';
-import utils from './index';
+import utils from '../utils';
+import Files from './files';
 
 
 export default class Login extends React.Component{
-    //client id = app key
-    CLIENT_ID = 'hamdg2o7t6tygwy'
+    //client id är app key fron dropbox-appen
+     CLIENT_ID = 'hamdg2o7t6tygwy'
 
 //renderItems ska utföras i FILES-filen
     renderItems = (items) => {
@@ -23,11 +24,21 @@ export default class Login extends React.Component{
 
 
 
-    //detta ska vara en action
+    //detta ska vara en action,
     onClickHandler = () => {
         const that = this;
-       let dbx = new Dropbox({ accessToken: this.getAccessTokenFromUrl() })
-        console.log('körs')
+       let dbx = new Dropbox({
+           accessToken: this.getAccessTokenFromUrl(),
+           clientId: this.CLIENT_ID
+       })
+
+
+
+        //var dbx = new Dropbox.Dropbox({ clientId: CLIENT_ID });????
+            let authUrl = dbx.getAuthenticationUrl('http://localhost:3000/auth');
+            document.getElementById('authlink').href = authUrl;
+
+
         dbx.filesListFolder({path: ''})
             .then(function(response) {
                 console.log(that)
@@ -40,12 +51,12 @@ export default class Login extends React.Component{
     }
 
     getAccessTokenFromUrl = () => {
-        return utils.parseQueryString(window.location.hash).accessToken;
-        // return 'KNeTyKvgwzAAAAAAAAAA2Ip29UxARWYwxU-_E1De_NaUp0ZPiTizRbEuQip6OX9o';
+       return utils.parseQueryString(window.location.hash).accessToken;
+        // return 'KNeTyKvgwzAAAAAAAAAA2Ip29UxARWYwxU-_E1De_NaUp0ZPiTizRbEuQip6OX9o'; -> genväg-access-token från appen
     }
 
     isAuthenticated = () => {
-        return !!this.getAccessTokenFromUrl
+        return !!this.getAccessTokenFromUrl //gör funktionen till boolean, finns värde? -> return true
     }
 
 
@@ -69,9 +80,9 @@ export default class Login extends React.Component{
             <F>
                 <button>Log Out</button>
                 <p>
-                    {this.CLIENT_ID}
+                    Inloggad!
                 </p>
-                {/*<Files></Files>*/}
+                <Files/>
             </F>
             :
             <F>

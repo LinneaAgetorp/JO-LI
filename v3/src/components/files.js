@@ -1,3 +1,13 @@
+import React from 'react';
+import {render} from 'react-dom';
+
+
+export default function Files() {
+    render(
+        <div>hej</div>
+    )
+}
+
 
 // class Files ...
 
