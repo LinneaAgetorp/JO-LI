@@ -86,7 +86,7 @@ export default class Login extends React.Component {
                         ? <a href={authUrl}>Authenticate</a>
                         : (
                             <F>
-                                <button onClick={this.logoutBtn}>Log Out</button>
+                                <button className='navigation' onClick={this.logoutBtn}>Log Out</button>
                                 <p>
                                     Inloggad?
                                 </p>

@@ -103,13 +103,13 @@ export default class Files extends React.Component {
 
     render() {
         return (
-            <F>
-                <div>{this.state.navigate.map((crumb, i) => <a key={i}
-                                                               onClick={this.navigate(crumb, i)}> {crumb.name} </a>)} </div>
+            <div className='mainContainer'>
+                <div className='crumbs'>{this.state.navigate.map((crumb, i) => <a key={i}
+                                                               onClick={this.navigate(crumb, i)}>/ {crumb.name} </a>)} </div>
 
                 {this.state.filesExists
                     ?
-                    <F>
+                    <div className='mainContent'>
                         <a onClick={this.goHome}> HOME</a>
 
                         <ul>
@@ -118,25 +118,26 @@ export default class Files extends React.Component {
                                     ?
                                     <li key={i}><a
                                         onClick={this.getFolder(file)}>Folder: {file.name}</a> <a
-                                        onClick={this.starClick(i)}>STAAAAR</a></li>
+                                        onClick={this.starClick(i)}>STAR</a></li>
                                     :
 
                                     <li key={i}>{`Name: ${file.name} Size: ${file.size} Last modified: ${file.client_modified}`}
-                                        <a onClick={this.starClick(i)}>STAAAAR</a> <a onClick={this.onDownload(file.id)}>DOWNLOAD</a></li>
+                                        <a onClick={this.starClick(i)}>STAR</a> <a onClick={this.onDownload(file.id)}>DOWNLOAD</a></li>
                             )}
                         </ul>
-                    </F>
+                    </div>
                     :
                     <div>fanns inga files</div>
                 }
-
-                <h2>STAAARRED FILES AND FOLDERS ----></h2>
-                <ul>
-                    {this.state.starredItems.map((item, i) =>
-                        <li key={i}>{item.name} <a onClick={this.removeStar(i)}>REMOVE STAAAR</a></li>
-                    )}
-                </ul>
-            </F>
+                <div className='sidebar'>
+                    <h2>Favourites:</h2>
+                    <ul>
+                        {this.state.starredItems.map((item, i) =>
+                            <li key={i}>{item.name} <a onClick={this.removeStar(i)}>REMOVE STAR</a></li>
+                        )}
+                    </ul>
+                </div>
+            </div>
         )
     }
 }
