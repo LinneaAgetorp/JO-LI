@@ -9,6 +9,7 @@ ul{
   background-image: url("https://images.pexels.com/photos/417122/pexels-photo-417122.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940");
   background-size: cover;
   background-repeat: no-repeat;
+  height: 100vh;
   color: whitesmoke;
 }
 /* Grid-styling of main content */
