@@ -1,4 +1,8 @@
-body {
+
+ul{
+  list-style-type: none;
+  }
+  body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
@@ -44,4 +48,24 @@ Den här delen blev inte som jag tänkt, sparar det tills vi rättar till senare
 /* breadcrumb-style */
 .crumbs {
   font-size: 1.3em;
+}
+
+.fileGrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-auto-rows: 1fr 1fr 1fr 1fr;
+}
+.fa-folder{
+  margin-right: 10px;
+}
+li span{
+  display:block;
+  margin-top: 5px;
+}
+.fa-info-circle .fileMetadata{
+  font-size: 9px;
+  opacity: 0;
+}
+.fa-info-circle:hover .fileMetadata{
+ opacity: 1;
 }

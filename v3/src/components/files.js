@@ -104,25 +104,31 @@ export default class Files extends React.Component {
     render() {
         return (
             <div className='mainContainer'>
-                <div className='crumbs'>{this.state.navigate.map((crumb, i) => <a key={i}
-                                                               onClick={this.navigate(crumb, i)}>/ {crumb.name} </a>)} </div>
+                <div className='crumbs fas fa-folder-open'>{this.state.navigate.map((crumb, i) => <a key={i}
+                                                               onClick={this.navigate(crumb, i)} >/ {crumb.name} </a>)} </div>
 
                 {this.state.filesExists
                     ?
                     <div className='mainContent'>
                         <a onClick={this.goHome}> HOME</a>
 
-                        <ul>
+                        <ul className='fileGrid'>
                             {this.state.files.map((file, i) =>
                                 (file['.tag'] === 'folder')
                                     ?
-                                    <li key={i}><a
-                                        onClick={this.getFolder(file)}>Folder: {file.name}</a> <a
-                                        onClick={this.starClick(i)}>STAR</a></li>
+                                    <li key={i}><p className="fas fa-folder"></p><a
+                                             
+                                        onClick={this.getFolder(file)}>{file.name}</a> <a
+                                        onClick={this.starClick(i)} className="far fa-star"></a></li>
                                     :
 
-                                    <li key={i}>{`Name: ${file.name} Size: ${file.size} Last modified: ${file.client_modified}`}
-                                        <a onClick={this.starClick(i)}>STAR</a> <a onClick={this.onDownload(file.id)}>DOWNLOAD</a></li>
+                                    <li key={i}>{file.name}
+                                        <span><a onClick={this.starClick(i)} className="far fa-star"></a>
+                                              <a onClick={this.onDownload(file.id)} className="far fa-arrow-alt-circle-down"></a>
+                                              <a className="fas fa-info-circle"><p className="fileMetadata">{`Size: ${file.size} Last modified: ${file.client_modified}`}</p></a>
+                                        </span>
+                                        
+                                        </li>
                             )}
                         </ul>
                     </div>
@@ -133,7 +139,7 @@ export default class Files extends React.Component {
                     <h2>Favourites:</h2>
                     <ul>
                         {this.state.starredItems.map((item, i) =>
-                            <li key={i}>{item.name} <a onClick={this.removeStar(i)}>REMOVE STAR</a></li>
+                            <li key={i}>{item.name} <a onClick={this.removeStar(i)} className="fas fa-times"></a></li>
                         )}
                     </ul>
                 </div>
