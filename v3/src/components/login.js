@@ -87,10 +87,8 @@ export default class Login extends React.Component {
                         : (
                             <F>
                                 <button className='navigation' onClick={this.logoutBtn}>Log Out</button>
-                                <p>
-                                    Inloggad?
-                                </p>
-                                <Files token={this.state.token}>files</Files>
+
+                                <Files token={this.state.token}/>
                             </F>
                         )
                 }

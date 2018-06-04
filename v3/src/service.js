@@ -11,7 +11,7 @@ class Service {
             url:'https://api.dropboxapi.com/2/users/get_current_account',
             headers: {Authorization: `Bearer ${token}`}
         })
-            .then(response => response.data.root_info.root_namespace_id)
+            .then(response => response.data)
             .catch(error => console.log('error i service: (wifi?)   ', error))
     }
 
@@ -39,17 +39,18 @@ class Service {
     }
 
 
-    downloadFile(fileName, token){
-        console.log('download      :   ', fileName, token)
+    getTemporaryLink(token, file) {
         return axios({
             method: 'post',
-            url: 'https://content.dropboxapi.com/2/files/download',
-            headers: {Authorization: `Bearer ${token}`, 'Dropbox-API-Arg': JSON.stringify({'path': `${fileName}`})}
+            url: 'https://api.dropboxapi.com/2/files/get_temporary_link',
+            headers: {Authorization: `Bearer ${token}`, "Content-Type": "application/json"},
+            data: {"path": `${file}`}
 
         })
-            .then(response => response)
-            .catch(error => console.log('error i download :  ', error))
+            .then(response => response.data.link)
+            .catch(error => console.log(error))
     }
+
 }
 
 export default new Service();

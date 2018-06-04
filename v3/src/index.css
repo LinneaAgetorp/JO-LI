@@ -47,8 +47,19 @@ Den här delen blev inte som jag tänkt, sparar det tills vi rättar till senare
 }
 
 /* breadcrumb-style */
-.crumbs {
+.crumb-wrapper {
+  display: flex;
+}
+
+.breadcrumbs {
+  margin-top: 5px;
+}
+
+.crumbs, .home {
   font-size: 1.3em;
+  grid-column: 1;
+  grid-row: 1;
+  padding: 5px;
 }
 
 .fileGrid{
@@ -56,6 +67,11 @@ Den här delen blev inte som jag tänkt, sparar det tills vi rättar till senare
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-auto-rows: 1fr 1fr 1fr 1fr;
 }
+
+.fa, .far, .fas {
+  display: inline;
+}
+
 .fa-folder{
   margin-right: 10px;
 }
