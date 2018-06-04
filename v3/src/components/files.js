@@ -94,10 +94,21 @@ export default class Files extends React.Component {
         }
     }
 
-    onDownload = (i) => {
+    onDownload = (file) => {
+
         return () => {
-            Service.downloadFile(i, this.token)
-                .then(response => console.log(response))
+            Service.downloadFile(file.id, this.token)
+                .then(response => {
+                    console.log(response, 'path', file)
+
+                    const a = document.createElement('a');
+                    a.setAttribute('href', `${file.path_lower}`);
+                    a.setAttribute('download', `${file.name}`);
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                })
         }
     }
 
@@ -122,7 +133,7 @@ export default class Files extends React.Component {
                                     :
 
                                     <li key={i}>{`Name: ${file.name} Size: ${file.size} Last modified: ${file.client_modified}`}
-                                        <a onClick={this.starClick(i)}>STAR</a> <a onClick={this.onDownload(file.id)}>DOWNLOAD</a></li>
+                                        <a onClick={this.starClick(i)}>STAR</a> <a onClick={this.onDownload(file)}>DOWNLOAD</a></li>
                             )}
                         </ul>
                     </div>
