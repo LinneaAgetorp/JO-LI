@@ -18,7 +18,14 @@ export default class Files extends React.Component {
         }
 
 
-    componentDidMount() {   //när sidan laddats
+    componentDidMount() {
+        // let starredItems = localStorage.getItem('starredItems');
+        // if (starredItems){
+        //     starredItems = JSON.parse((starredItems));
+        //     this.setState({
+        //         starredItems
+        //     })
+        // }
 
         Service.getNameSpaceID(this.token)          //skickar med vår token till services för att få användar id sendan..
             .then(response => {
@@ -31,6 +38,22 @@ export default class Files extends React.Component {
                 Service.getFiles(this.namespace, this.token)    //vidare till getFiles() där vi får användarens filer
                     .then(response => {
 
+
+                        let starredItems = JSON.parse(localStorage.getItem('starredItems'));
+                        console.log('res', response.entries, starredItems)
+                        if (starredItems){
+                            starredItems.filter((item) => item === response.entries)
+                            if(starredItems) {
+
+                                this.setState({
+                                    starredItems
+                                })
+                            }
+
+
+
+
+                        }
                         this.setState(                              //när vi fått svar renderas filerna på sidan.
                             {
                                 filesExists: true,
@@ -68,6 +91,7 @@ export default class Files extends React.Component {
 
     navigate = (crumb, i) => { // styr breadcrumbs
         return () => { // navigate-funktionen anropas direkt vid rendering, skapa en till inuti som kan anropas vid klick
+
             this.state.navigate.splice((i + 2)) //plockar ut början av listan, fram till klicket(sätts in nedan). +2 pga: response[] mellan varje folder{}
             this.setState({
                 files: this.state.navigate[i + 1].response, //nytt state: den klickade mappens innehåll läggs i files (i+1 = mappens INNEHÅLL istället för bara mappens namn)
@@ -76,13 +100,33 @@ export default class Files extends React.Component {
         }
     }
 
+    toParentFolder = () => { // styr breadcrumbs
+        return () => { // navigate-funktionen anropas direkt vid rendering, skapa en till inuti som kan anropas vid klick
+
+            if (this.state.navigate.length > 2) {
+                this.state.navigate.splice(this.state.navigate.length - 2) //kapa de sista två elementen i navigate-listan (ett element + response-elementet)
+
+                this.setState({
+                    files: this.state.navigate[this.state.navigate.length - 1].response, //navigate-listans längd -1 för att rendera rätt mapp-innehåll
+                    navigate: this.state.navigate           // breadcrumb-listan med vad som blir kvar efter splice
+                })
+            } else {
+                this.goHome() //listan blir för kort för den sista splicen, kör därför goHome-funktionen för att rendera roten
+            }
+        }
+    }
+
     // TODO: spara i localstorage
     starClick = (i) => {
         return () => {
             if (!this.state.starredItems.includes(this.state.files[i])) {
+                let newStar = JSON.stringify([...this.state.starredItems,this.state.files[i]])
+                localStorage.setItem('starredItems', newStar)
+
                 this.setState({
                     starredItems: [...this.state.starredItems, this.state.files[i]]
                 })
+                console.log('starclick:', this.state.starredItems)
             } else {
                 return null
             }
@@ -91,10 +135,12 @@ export default class Files extends React.Component {
 
     removeStar = (i) => {        //removes starred items when clicked, TODO: ta bort från localstorage också
         return () => {
+            localStorage.removeItem('starredItems') // tar bort hela arrayen, måste därför köra LS.setItem igen med resterande stjärnor.
             this.state.starredItems.splice(i, 1)
             this.setState({
                 starredItems: this.state.starredItems
             })
+            localStorage.setItem('starredItems', JSON.stringify(this.state.starredItems))
         }
     }
 
@@ -134,14 +180,12 @@ export default class Files extends React.Component {
                 console.log('File too large, max-size 150mb')
             }
         }
-
-
     }
 
     renderFile(file, i) {               // göra detta till enskild komponent? <File file={file}/> och <Folder folder={folder}/>
         if (file['.tag'] === 'folder') {
             return (
-                <li key={i}><p className="fas fa-folder"> </p><a
+                <li key={i}><p className="fas fa-folder"></p><a
 
                     onClick={this.getFolder(file)}>{file.name}</a> <a
                     onClick={this.starClick(i)} className="far fa-star"> </a>
@@ -174,11 +218,13 @@ export default class Files extends React.Component {
                 <div className='mainContainer'>
 
                     <div className='crumb-wrapper'>
-                        <div className='home fas fa-home' onClick={this.goHome}> </div>
+                        <div className='home fas fa-home' onClick={this.goHome}></div>
                         <div className='breadcrumbs'>
                             {this.state.navigate.map((crumb, i) =>
                                 <a key={i} onClick={this.navigate(crumb, i)}> {crumb.name} </a>)} </div>
                     </div>
+
+                    <button onClick={this.toParentFolder()}>To parent folder</button>
 
 
                     {this.state.filesExists
