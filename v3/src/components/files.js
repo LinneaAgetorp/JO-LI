@@ -194,12 +194,13 @@ export default class Files extends React.Component {
         } else {
             return (
                 <li key={i}>{file.name}
-                    <span><a onClick={this.starClick(i)} className="far fa-star"> </a>
-                                              <a id='shared-link' onClick={this.onDownload(file)}
-                                                 className="far fa-arrow-alt-circle-down"> </a>
-                                              <a className="fas fa-info-circle"><p
-                                                  className="fileMetadata">{`Size: ${file.size} Last modified: ${file.client_modified}`}</p></a>
-                                            </span>
+                    <span>
+                        <a onClick={this.starClick(i)} className="far fa-star"> </a>
+                        <a id='shared-link' onClick={this.onDownload(file)}
+                           className="far fa-arrow-alt-circle-down"> </a>
+                        <a className="fas fa-info-circle">
+                            <p className="fileMetadata">{`Size: ${file.size} Last modified: ${file.client_modified}`}</p></a>
+                    </span>
 
                 </li>
             )
