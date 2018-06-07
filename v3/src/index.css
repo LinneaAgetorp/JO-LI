@@ -1,7 +1,13 @@
 
 ul{
   list-style-type: none;
+  padding-left: 10px;
   }
+
+li{
+  padding: 5px;
+  margin: 5px;
+}
   body {
   margin: 0;
   padding: 0;
@@ -9,9 +15,86 @@ ul{
   background-image: url("https://images.pexels.com/photos/417122/pexels-photo-417122.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940");
   background-size: cover;
   background-repeat: no-repeat;
-  height: 100vh;
+  height: 100%;
+    min-height: 100vh;
   color: whitesmoke;
 }
+
+  .auth{
+    border: solid white 2px;
+    border-radius: 15px ;
+    font-size: 2em;
+    color: whitesmoke;
+    text-decoration: none;
+    position: absolute;
+    top: 10%;
+    bottom: 0;
+    left: 43%;
+    height: fit-content;
+    padding: 15px;
+    margin: auto;
+  }
+
+.loader {
+  border: 10px solid #f3f3f3; /* Light grey */
+  border-top: 10px solid rgba(254, 249, 255, 0.32); /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+  width: 100px;
+  height: 100px;
+
+
+  position: absolute;
+  top:0;
+  bottom: 0;
+  left: -240px;
+  right: 0;
+
+  margin: auto;
+}
+
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+  i, a, button, input {
+    cursor: pointer;
+    padding: 5px;
+  }
+  .App-title{
+    font-family: 'Lobster', cursive;
+    font-size: 70px;
+    padding-left: 20px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .App-title-main{
+    font-family: 'Lobster', cursive;
+    font-size: 45px;
+    padding-left: 20px;
+    text-align: center;
+  }
+  .App-title-2{
+  font-family: 'PT Sans', sans-serif;
+    text-align: center;
+    margin-top: 0;
+  }
+  .App-title-end{
+    font-family: 'Lobster', cursive;
+    font-size: 20px;
+  }
+  button{
+    background-color: transparent;
+    border-radius: 10px 10px 10px 10px;
+    padding: 5px 10px 5px 10px;
+    color: white;
+    border: solid 2px white;
+  }
+
 /* Grid-styling of main content */
 .mainContainer {
   display: grid;
@@ -21,14 +104,27 @@ ul{
   padding: 2%;
 }
 
-/*
-Den här delen blev inte som jag tänkt, sparar det tills vi rättar till senare
-.navigation {*/
-  /*grid-column: 1/3;*/
-  /*grid-row: 1;*/
-  /*padding: 2%;*/
+.topHeader {
+  display: flex;
+  justify-content: space-evenly;
+}
 
-/*}*/
+.lowerHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.lowerHeader h4 {
+  padding-right: 10%;
+  margin-top: 0;
+  position: relative;
+  top: -100px;
+}
+
+.logOutBtn {
+  max-height: fit-content;
+  align-self: center;
+}
 
 .mainContent {
   grid-column: 1/2;
@@ -67,13 +163,22 @@ Den här delen blev inte som jag tänkt, sparar det tills vi rättar till senare
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-auto-rows: 1fr 1fr 1fr 1fr;
 }
-
+.sidebar .fa-arrow-alt-circle-down {
+  font-size: 1.4em;
+  padding-left: 10px;
+}
 .fa, .far, .fas {
   display: inline;
+  padding: 5px 2px 2px;
 }
 
-.fa-folder{
-  margin-right: 10px;
+.fa-chevron-circle-left {
+  font-size: 1.5em;
+}
+
+.fa-folder, .fa-file{
+  padding: 5px;
+  font-size: 1.6em;
 }
 li span{
   display:block;

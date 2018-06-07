@@ -19,13 +19,6 @@ export default class Files extends React.Component {
 
 
     componentDidMount() {
-        // let starredItems = localStorage.getItem('starredItems');
-        // if (starredItems){
-        //     starredItems = JSON.parse((starredItems));
-        //     this.setState({
-        //         starredItems
-        //     })
-        // }
 
         Service.getNameSpaceID(this.token)          //skickar med vår token till services för att få användar id sendan..
             .then(response => {
@@ -37,23 +30,6 @@ export default class Files extends React.Component {
 
                 Service.getFiles(this.namespace, this.token)    //vidare till getFiles() där vi får användarens filer
                     .then(response => {
-
-
-                        let starredItems = JSON.parse(localStorage.getItem('starredItems'));
-                        console.log('res', response.entries, starredItems)
-                        if (starredItems){
-                            starredItems.filter((item) => item === response.entries)
-                            if(starredItems) {
-
-                                this.setState({
-                                    starredItems
-                                })
-                            }
-
-
-
-
-                        }
                         this.setState(                              //när vi fått svar renderas filerna på sidan.
                             {
                                 filesExists: true,
@@ -62,10 +38,20 @@ export default class Files extends React.Component {
                             }
                         )
 
+                        let starredItems = JSON.parse(localStorage.getItem('starredItems'));
+                        console.log('res', response.entries, starredItems)
+                        if (starredItems) {
+                            starredItems.filter((item) => item === response.entries) //filtrera bort filer som har raderats från dropbox-kontot mellan sessioner
+                            if (starredItems) {
+
+                                this.setState({
+                                    files: this.state.files,
+                                    starredItems: starredItems
+                                })
+                            }
+                        }
                     })
             })
-
-
     }
 
 
@@ -94,7 +80,7 @@ export default class Files extends React.Component {
 
             this.state.navigate.splice((i + 2)) //plockar ut början av listan, fram till klicket(sätts in nedan). +2 pga: response[] mellan varje folder{}
             this.setState({
-                files: this.state.navigate[i + 1].response, //nytt state: den klickade mappens innehåll läggs i files (i+1 = mappens INNEHÅLL istället för bara mappens namn)
+                files: this.state.navigate[i + 1].response, //den klickade mappens innehåll läggs i files (i+1 = mappens INNEHÅLL istället för bara mappens namn)
                 navigate: this.state.navigate               // listan med vad som blir kvar efter splice, det som är före breadcrumben vi klickade på
             })
         }
@@ -116,11 +102,14 @@ export default class Files extends React.Component {
         }
     }
 
-    // TODO: spara i localstorage
+
     starClick = (i) => {
         return () => {
-            if (!this.state.starredItems.includes(this.state.files[i])) {
-                let newStar = JSON.stringify([...this.state.starredItems,this.state.files[i]])
+            console.log('statestars', this.state.starredItems, 'clicked', this.state.files[i])
+            // if (!this.state.starredItems.includes(this.state.files[i])) {
+            if (this.state.starredItems.findIndex( (f) => f.id === this.state.files[i].id) === -1) {
+                let newStar = JSON.stringify([...this.state.starredItems, this.state.files[i]])
+                console.log('newstar:', newStar)
                 localStorage.setItem('starredItems', newStar)
 
                 this.setState({
@@ -133,7 +122,7 @@ export default class Files extends React.Component {
         }
     }
 
-    removeStar = (i) => {        //removes starred items when clicked, TODO: ta bort från localstorage också
+    removeStar = (i) => {        //removes starred items when clicked
         return () => {
             localStorage.removeItem('starredItems') // tar bort hela arrayen, måste därför köra LS.setItem igen med resterande stjärnor.
             this.state.starredItems.splice(i, 1)
@@ -148,13 +137,13 @@ export default class Files extends React.Component {
         return () => {
             Service.getTemporaryLink(this.token, file.path_lower)
                 .then(data => {
-                    const a = document.createElement('a');
-                    a.setAttribute('href', data);
+                    const a = document.createElement('a');      //skapar tillfällig länk
+                    a.setAttribute('href', data);               //sätter href till länken vi fick från "getTemporaryLink"
                     a.setAttribute('download', `${data.name}`);
                     a.style.display = 'none';
-                    document.body.appendChild(a);
+                    document.body.appendChild(a);               //lägg till länken i domen
                     a.click();
-                    document.body.removeChild(a);
+                    document.body.removeChild(a);               //ta bort länken när download startat
                 })
         }
     }
@@ -164,18 +153,17 @@ export default class Files extends React.Component {
 
             const UPLOAD_FILE_SIZE_LIMIT = 150 * 1024 * 1024;
             let dbx = new Dropbox({accessToken: this.token})
-            const fileInput = document.getElementById('file-upload');
+            const fileInput = document.getElementById('file-upload');       //hämta vilken fil som valts
 
             const file = fileInput.files[0];
 
-            if (file.size < UPLOAD_FILE_SIZE_LIMIT) {
+            if (file.size < UPLOAD_FILE_SIZE_LIMIT) {           //kolla att filen inte är större än 150mb
                 dbx.filesUpload({path: '/' + file.name, contents: file})
                     .then(response => {
-                            this.setState({
-                                files: [...this.state.files, response]
-                            })
-                        }
-                    )
+                        this.setState({
+                            files: [...this.state.files, response]  //uppdatera state, rendera filen på sidan
+                        })
+                    })
             } else {
                 console.log('File too large, max-size 150mb')
             }
@@ -187,21 +175,47 @@ export default class Files extends React.Component {
             return (
                 <li key={i}><p className="fas fa-folder"></p><a
 
-                    onClick={this.getFolder(file)}>{file.name}</a> <a
-                    onClick={this.starClick(i)} className="far fa-star"> </a>
+                    onClick={this.getFolder(file)}>{file.name}</a>
+                    {this.state.starredItems.find((f) => f.id === file.id) ?
+                        <a onClick={this.starClick(i)} className="fas fa-star"></a> :
+                        <a onClick={this.starClick(i)} className="far fa-star"></a>}
                 </li>
             )
         } else {
             return (
-                <li key={i}>{file.name}
-                    <span>
-                        <a onClick={this.starClick(i)} className="far fa-star"> </a>
-                        <a id='shared-link' onClick={this.onDownload(file)}
-                           className="far fa-arrow-alt-circle-down"> </a>
-                        <a className="fas fa-info-circle">
-                            <p className="fileMetadata">{`Size: ${file.size} Last modified: ${file.client_modified}`}</p></a>
-                    </span>
+                <li key={i}><i className="fas fa-file"></i>{file.name} <br/>
 
+                    {this.state.starredItems.find((f) => f.id === file.id) ?
+                        <a onClick={this.starClick(i)} className="fas fa-star"></a> :
+                        <a onClick={this.starClick(i)} className="far fa-star"></a>}
+                    <a id='shared-link' onClick={this.onDownload(file)}
+                       className="far fa-arrow-alt-circle-down"> </a>
+                    <a className="fas fa-info-circle">
+                        <p className="fileMetadata">{`Size: ${file.size} Last modified: ${file.client_modified}`}</p>
+                    </a>
+
+
+                </li>
+            )
+        }
+    }
+
+    renderFavourites(file, i) {               // göra detta till enskild komponent? <File file={file}/> och <Folder folder={folder}/>
+
+        if (file['.tag'] === 'folder') {
+            return (
+                <li key={i}><p className="fas fa-folder"></p><a
+
+                    onClick={this.getFolder(file)}>{file.name}</a>
+                    <a onClick={this.removeStar(i)} className="fas fa-times"> </a>
+                </li>
+            )
+        } else {
+            return (
+                <li key={i}><i className="fas fa-file"></i>{file.name}<a id='shared-link'
+                                                                         onClick={this.onDownload(file)}
+                                                                         className="far fa-arrow-alt-circle-down"> </a>
+                    <a onClick={this.removeStar(i)} className="fas fa-times"> </a>
                 </li>
             )
         }
@@ -210,11 +224,13 @@ export default class Files extends React.Component {
     render() {
         return (
             <F>
-                <h3>{`Logged in user: ${this.state.userName}`}</h3>
-
-                <input type='file' id='file-upload'/>
-                <button onClick={this.onUpload()}>Upload File</button>
-
+                <div className='lowerHeader'>
+                    <div>
+                        <input type='file' id='file-upload'/>
+                        <button onClick={this.onUpload()}>Upload File</button>
+                    </div>
+                    <h4>{`Logged in user: ${this.state.userName}`}</h4>
+                </div>
 
                 <div className='mainContainer'>
 
@@ -225,27 +241,22 @@ export default class Files extends React.Component {
                                 <a key={i} onClick={this.navigate(crumb, i)}> {crumb.name} </a>)} </div>
                     </div>
 
-                    <button onClick={this.toParentFolder()}>To parent folder</button>
-
 
                     {this.state.filesExists
                         ?
                         <div className='mainContent'>
-
+                            <i className="fas fa-chevron-circle-left" onClick={this.toParentFolder()}> </i>
                             <ul className='fileGrid'>
                                 {this.state.files.map((file, i) => this.renderFile(file, i))}
                             </ul>
                         </div>
                         :
-                        <div>Loading files</div>
+                        <div className="loader"></div>
                     }
                     <div className='sidebar'>
                         <h2>Favourites:</h2>
                         <ul>
-                            {this.state.starredItems.map((item, i) =>
-                                <li key={i}>{item.name} <a onClick={this.removeStar(i)} className="fas fa-times"> </a>
-                                </li>
-                            )}
+                            {this.state.starredItems.map((file, i) => this.renderFavourites(file, i))}
                         </ul>
                     </div>
                 </div>
