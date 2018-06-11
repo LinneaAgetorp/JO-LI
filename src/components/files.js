@@ -142,7 +142,7 @@ export default class Files extends React.Component {
                     a.click();
                     document.body.removeChild(a);               //ta bort länken när download startat
                 })
-                .catch(error => console.log('error message, cant download file.', error), alert('cant download file'))
+                .catch(() => alert('cant download file'))
         }
     }
 
