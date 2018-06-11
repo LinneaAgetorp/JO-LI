@@ -72,7 +72,7 @@ export default class Login extends React.Component {
 
         let authUrl;
         if (!authenticated) {
-            authUrl = dbx.getAuthenticationUrl('http://localhost:3000');
+            authUrl = dbx.getAuthenticationUrl('https://joli.netlify.com');
         }
 
 
