@@ -5,7 +5,7 @@ import {Dropbox} from "dropbox";
 
 export default class Files extends React.Component {
 
-    token = this.props.token;   //vår apps accesstoken från login
+    token = this.props.token;   //vår apps accesstoken från login-komponenten
     namespace;                  //"id på clientens konto"
     state =
         {
@@ -104,13 +104,13 @@ export default class Files extends React.Component {
     starClick = (i) => {
         return () => {
 
-            if (this.state.starredItems.findIndex((item) => item.id === this.state.files[i].id) === -1) {
-                let newStar = JSON.stringify([...this.state.starredItems, this.state.files[i]])
+            if (this.state.starredItems.findIndex((item) => item.id === this.state.files[i].id) === -1) { //finns filen/foldern redan i starredItems? Om inte, lägg till
+                let newStar = JSON.stringify([...this.state.starredItems, this.state.files[i]]) //gör till lämpligt format för att raden nedanför lägga till i LS
 
                 localStorage.setItem('starredItems', newStar)
 
                 this.setState({
-                    starredItems: [...this.state.starredItems, this.state.files[i]]
+                    starredItems: [...this.state.starredItems, this.state.files[i]] //behåll items som redan finns i arrayen, plus lägg till den nya på slutet
                 })
 
             } else {
@@ -119,9 +119,9 @@ export default class Files extends React.Component {
         }
     }
 
-    removeStar = (i) => {        //removes starred items when clicked
+    removeStar = (i) => {
         return () => {
-            localStorage.removeItem('starredItems') // tar bort hela arrayen, måste därför köra LS.setItem igen med resterande stjärnor.
+            localStorage.removeItem('starredItems') // tar bort hela arrayen, måste därför köra LS.setItem igen med resterande stjärnor/favoriter.
             this.state.starredItems.splice(i, 1)
             this.setState({
                 starredItems: this.state.starredItems
@@ -142,7 +142,7 @@ export default class Files extends React.Component {
                     a.click();
                     document.body.removeChild(a);               //ta bort länken när download startat
                 })
-                .catch(error => console.log('error message, cant download file.', error))
+                .catch(error => console.log('error message, cant download file.', error), alert('cant download file'))
         }
     }
 
@@ -168,7 +168,7 @@ export default class Files extends React.Component {
         }
     }
 
-    renderFile(file, i) {               // göra detta till enskild komponent? <File file={file}/> och <Folder folder={folder}/>
+    renderFile(file, i) {
         if (file['.tag'] === 'folder') {
             return (
                 <li key={i}><p className="fas fa-folder"> </p> <a
@@ -181,7 +181,7 @@ export default class Files extends React.Component {
             )
         } else {
             return (
-                <li key={i}><i className="fas fa-file"></i>{file.name} <br/>
+                <li key={i}><i className="fas fa-file"> </i>{file.name} <br/>
 
                     {this.state.starredItems.find((f) => f.id === file.id) ?
                         <a onClick={this.starClick(i)} className="fas fa-star"> </a> :
@@ -202,7 +202,7 @@ export default class Files extends React.Component {
 
         if (file['.tag'] === 'folder') {
             return (
-                <li key={i}><p className="fas fa-folder"></p><a
+                <li key={i}><p className="fas fa-folder"> </p><a
 
                     onClick={this.getFolder(file)}>{file.name}</a>
                     <a onClick={this.removeStar(i)} className="fas fa-times"> </a>
@@ -210,7 +210,7 @@ export default class Files extends React.Component {
             )
         } else {
             return (
-                <li key={i}><i className="fas fa-file"></i>{file.name}<a id='shared-link'
+                <li key={i}><i className="fas fa-file"> </i>{file.name}<a id='shared-link'
                                                                          onClick={this.onDownload(file)}
                                                                          className="far fa-arrow-alt-circle-down"> </a>
                     <a onClick={this.removeStar(i)} className="fas fa-times"> </a>
@@ -233,7 +233,7 @@ export default class Files extends React.Component {
                 <div className='mainContainer'>
 
                     <div className='crumb-wrapper'>
-                        <div className='home fas fa-home' onClick={this.goHome}></div>
+                        <div className='home fas fa-home' onClick={this.goHome}> </div>
                         <div className='breadcrumbs'>
                             {this.state.navigate.map((crumb, i) =>
                                 <a key={i} onClick={this.navigate(crumb, i)}> {crumb.name} </a>)} </div>
@@ -249,7 +249,7 @@ export default class Files extends React.Component {
                             </ul>
                         </div>
                         :
-                        <div className="loader"></div>
+                        <div className="loader"> </div>
                     }
                     <div className='sidebar'>
                         <h2>Favourites:</h2>
