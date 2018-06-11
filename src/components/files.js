@@ -163,7 +163,7 @@ export default class Files extends React.Component {
                         })
                     })
             } else {
-                console.log('File too large, max-size 150mb')
+                alert('File too large, max-size 150mb')
             }
         }
     }
