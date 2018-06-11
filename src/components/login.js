@@ -61,7 +61,7 @@ export default class Login extends React.Component {
             authenticated: false,
             token: ""
         });
-        window.location.href= 'http://localhost:3000' // tillbaka till "start-url"
+        window.location.href= 'https://joli.netlify.com' // tillbaka till "start-url"
     }
 
     render() {
