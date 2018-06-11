@@ -185,7 +185,7 @@ li span{
   margin-top: 5px;
 }
 .fa-info-circle .fileMetadata{
-  font-size: 9px;
+  font-size: 12px;
   opacity: 0;
 }
 .fa-info-circle:hover .fileMetadata{

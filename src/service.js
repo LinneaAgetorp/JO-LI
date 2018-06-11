@@ -5,14 +5,13 @@ class Service {
 
 
     getNameSpaceID(token) {
-        console.log('WOOOP', token)
         return axios({
             method:'post',
             url:'https://api.dropboxapi.com/2/users/get_current_account',
             headers: {Authorization: `Bearer ${token}`}
         })
             .then(response => response.data)
-            .catch(error => console.log('error i service: (wifi?)   ', error))
+            .catch(error => console.log('error trying to get namespace ID   ', error))
     }
 
     getFiles(namespaceID, token){
@@ -23,11 +22,10 @@ class Service {
             data: {'path': `ns:${namespaceID}`}
         })
             .then(response => response.data)
-            .catch(error => console.log('error i service2:  ', error))
+            .catch(error => console.log('error trying to get file:  ', error))
     }
 
     getOneFolder(namespaceID, token, folderName){
-        console.log('foldername', folderName)
         return axios({
             method: 'post',
             url: 'https://api.dropboxapi.com/2/files/list_folder',
@@ -35,7 +33,7 @@ class Service {
             data: {'path': `ns:${namespaceID}/${folderName}/`}
         })
             .then(response => response.data.entries)
-            .catch(error => console.log('error i service2:  ', error))
+            .catch(error => console.log('error message, trying to get folder:  ', error))
     }
 
 
@@ -48,7 +46,7 @@ class Service {
 
         })
             .then(response => response.data.link)
-            .catch(error => console.log(error))
+            .catch(error => console.log('error message, trying to get temporary link: ',error))
     }
 
 }

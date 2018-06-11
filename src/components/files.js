@@ -41,15 +41,13 @@ export default class Files extends React.Component {
                         let starredItems = JSON.parse(localStorage.getItem('starredItems'));
 
                         if (starredItems) {
-                            starredItems.filter((item) => item === response.entries) //filtrera bort filer som har raderats från dropbox-kontot mellan sessioner
-                            if (starredItems) {
 
-                                this.setState({
-                                    files: this.state.files,
-                                    starredItems: starredItems
-                                })
-                            }
+                            this.setState({
+                                files: this.state.files,
+                                starredItems: starredItems
+                            })
                         }
+
                     })
             })
     }
@@ -106,8 +104,7 @@ export default class Files extends React.Component {
     starClick = (i) => {
         return () => {
 
-            // if (!this.state.starredItems.includes(this.state.files[i])) {
-            if (this.state.starredItems.findIndex( (f) => f.id === this.state.files[i].id) === -1) {
+            if (this.state.starredItems.findIndex((item) => item.id === this.state.files[i].id) === -1) {
                 let newStar = JSON.stringify([...this.state.starredItems, this.state.files[i]])
 
                 localStorage.setItem('starredItems', newStar)
@@ -145,6 +142,7 @@ export default class Files extends React.Component {
                     a.click();
                     document.body.removeChild(a);               //ta bort länken när download startat
                 })
+                .catch(error => console.log('error message, cant download file.', error))
         }
     }
 
@@ -173,12 +171,12 @@ export default class Files extends React.Component {
     renderFile(file, i) {               // göra detta till enskild komponent? <File file={file}/> och <Folder folder={folder}/>
         if (file['.tag'] === 'folder') {
             return (
-                <li key={i}><p className="fas fa-folder"></p><a
+                <li key={i}><p className="fas fa-folder"> </p> <a
 
                     onClick={this.getFolder(file)}>{file.name}</a>
                     {this.state.starredItems.find((f) => f.id === file.id) ?
-                        <a onClick={this.starClick(i)} className="fas fa-star"></a> :
-                        <a onClick={this.starClick(i)} className="far fa-star"></a>}
+                        <a onClick={this.starClick(i)} className="fas fa-star"> </a> :
+                        <a onClick={this.starClick(i)} className="far fa-star"> </a>}
                 </li>
             )
         } else {
@@ -186,12 +184,12 @@ export default class Files extends React.Component {
                 <li key={i}><i className="fas fa-file"></i>{file.name} <br/>
 
                     {this.state.starredItems.find((f) => f.id === file.id) ?
-                        <a onClick={this.starClick(i)} className="fas fa-star"></a> :
-                        <a onClick={this.starClick(i)} className="far fa-star"></a>}
+                        <a onClick={this.starClick(i)} className="fas fa-star"> </a> :
+                        <a onClick={this.starClick(i)} className="far fa-star"> </a>}
                     <a id='shared-link' onClick={this.onDownload(file)}
                        className="far fa-arrow-alt-circle-down"> </a>
                     <a className="fas fa-info-circle">
-                        <p className="fileMetadata">{`Size: ${file.size} Last modified: ${file.client_modified}`}</p>
+                        <p className="fileMetadata">{`Size: ${file.size} bytes. Last modified: ${file.client_modified.toString().slice(0, 10)}`}</p>
                     </a>
 
 
@@ -200,7 +198,7 @@ export default class Files extends React.Component {
         }
     }
 
-    renderFavourites(file, i) {               // göra detta till enskild komponent? <File file={file}/> och <Folder folder={folder}/>
+    renderFavourites(file, i) {
 
         if (file['.tag'] === 'folder') {
             return (
